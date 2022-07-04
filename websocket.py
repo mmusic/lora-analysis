@@ -9,12 +9,16 @@ def date2ts(date):
     return datetime.datetime.timestamp(datetime.datetime.strptime(date, "%Y/%m/%d %H:%M:%S"))
 
 
-def ts2date(timestamp):
+def ts2date_ymd(timestamp):
     return datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d')
 
 
-filename = ts2date(time.time()) + '.csv'
-f = open(filename, 'a')
+def ts2date_ymdhms(timestamp):
+    return datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+
+
+filename = ts2date_ymd(time.time()) + '_lora.csv'
+f = open(filename, 'a', newline='')
 f_csv = csv.writer(f)
 
 router_info = {
@@ -30,16 +34,19 @@ router_info = {
     '20080029c69ffc2': {'lat': -22.314991786929966, 'lon': 114.1830702585825, 'name': '何文田邨適文樓'},
 }
 
+
 def on_message(wsapp, message):
     try:
         j = json.loads(message)
-        routers = j['upinfo']
-        for router in routers:
-            # print(hex(router['routerid'])[2:], router['rssi'], router_info[hex(router['routerid'])[2:]]['name'])
-            data = [hex(router['routerid'])[2:], router['rssi'], router['ArrTime']]
-            print(data)
-            f_csv.writerow([message])
-            f.flush()
+        if 'upinfo' in j:
+            routers = j['upinfo']
+            for router in routers:
+                data = [hex(router['routerid'])[2:], router['rssi'], router['ArrTime']]
+                print('Raw:', data)
+                f_csv.writerow(data)
+                f.flush()
+        # else:
+        #     print(ts2date_ymdhms(time.time()), 'not router data:', message)
     except Exception as e:
         print('Error!', e, message)
 
