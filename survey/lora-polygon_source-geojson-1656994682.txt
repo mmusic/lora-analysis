@@ -1,0 +1,16 @@
+MAPS = {
+11:[[114.19647657694793,22.35328829152222,1,0],[114.1678786564687,22.323413509941687,1,0],[114.18389936702062,22.30923448453325,1,0],[114.2131603576164,22.338919692980383,1,0]],
+12:[[114.21114776257366,22.33685403132924,1,0],[114.22307205478631,22.326202503933857,1,0],[114.21121750790581,22.31374273032469,1,0],[114.1989951083894,22.324661510461624,1,0]],
+}
+
+SOURCE_INFO_DICT = {
+'20080029c5e3677': SOURCE_INFO(source_identifier='20080029c5e3677', x=114.20243031103, y=22.341332498122, z=1, type='non-lon-lat', activated=True, addition_info={}),
+'20080029c1e38f3': SOURCE_INFO(source_identifier='20080029c1e38f3', x=114.19961790656, y=22.338569195377, z=1, type='non-lon-lat', activated=True, addition_info={}),
+'20080029c7b7b60': SOURCE_INFO(source_identifier='20080029c7b7b60', x=114.21104857064, y=22.325393947188, z=1, type='non-lon-lat', activated=True, addition_info={}),
+'20080029c69ffc2': SOURCE_INFO(source_identifier='20080029c69ffc2', x=114.18313563302, y=22.314959611931, z=1, type='non-lon-lat', activated=True, addition_info={}),
+'20080029c69feeb': SOURCE_INFO(source_identifier='20080029c69feeb', x=114.19547518445, y=22.348289433865, z=1, type='non-lon-lat', activated=True, addition_info={}),
+'2005813d31be7ec': SOURCE_INFO(source_identifier='2005813d31be7ec', x=114.19882170816, y=22.336642456859, z=1, type='non-lon-lat', activated=True, addition_info={}),
+}
+
+SURFACE_FEATURE = {
+}
