@@ -46,6 +46,7 @@ def get_gi():
     beacon_loc[0] = np.radians(beacon_loc[0]-center[0]) * 6371000 * cos(radians(center[1]))
     beacon_loc[1] = np.radians(beacon_loc[1]-center[1]) * 6371000
     return polygons, polygon_id, beacon_loc, geo2meter, meter2geo
+
 # %%
 polygons, polygon_id, beacon_loc, geo2meter, meter2geo = get_gi()
 
@@ -60,7 +61,7 @@ data_beacon['ts'] //= PERIOD
 for t, beacon_batch in data_beacon.groupby('ts'):
     pf.feed_data(t, beacon_batch[['bID','rssi']]) # add condition beacon_batch is not None and nonempty to run online
     if pf.tracked:
-        x, y = meter2geo(pf.pos_estimate)
+        x, y = meter2geo(pf.adsorb_polygon())
         print(f'{int(t)*PERIOD} at ({x:.3f}, {y:.3f})±{pf.pos_var:.3f}m in polygon #{polygon_id[pf.polygon_idx]};') # polygon_idx==0 means the location must not in any polygon
 
 

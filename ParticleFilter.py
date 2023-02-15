@@ -4,8 +4,10 @@ from math import sqrt
 import numpy as np
 import pandas as pd
 
-PERIOD = 3
-BEACON_WINDOW = 3 # *PERIODS
+from Visualization import Plotter
+
+PERIOD = 30
+BEACON_WINDOW = 2 # *PERIODS
 # MAX_BEACON_GAP = 3 # seconds, equal to BEACON_WINDOW for lack of MPU participation
 SWARM_SIZE = 500
 EFFECTIVE_SIZE = 300
@@ -14,7 +16,7 @@ def cross2d(a,b):
     return a[0] * b[1] - a[1] * b[0]
 
 class PF:
-    def __init__(self, ground_info):
+    def __init__(self, ground_info, gt_info):
         np.random.seed(0)
 
         self.polygons, self.beacons = ground_info
@@ -30,6 +32,8 @@ class PF:
         self.vel_estimate = None
         self.speed_estimate = None
         self.pos_var = None
+        
+        self.plotter = Plotter(ground_info, gt_info)
 
         self.polygon_idx = 0
 
@@ -75,6 +79,7 @@ class PF:
         self._update(beacon_batch)
         self._estimate()
         self._idx_polygon()
+        self.plotter.draw_posterior(self, beacon_batch, t)
         self._resample()        
         # can delete
         if self.event_log:
@@ -102,12 +107,12 @@ class PF:
         b_locs = self.beacons.loc[beacon_batch.index].values.T
         rssi = beacon_batch.rssi.values
         dist = np.sqrt((b_locs[0] - self.pos[0].reshape(-1,1))**2 + (b_locs[1] - self.pos[1].reshape(-1,1))**2) # cross_distance(self.pos, b_locs)
-        self.w = np.exp((((rssi+75)*11 - (dist-5))/10 * np.clip((rssi+120)/30,0,1)).sum(axis=1))
+        self.w = np.exp((((rssi+120)*11 - (dist-50))/10 * np.clip((rssi+120)/30,0,1)).sum(axis=1))
         self._normalize_w('Beacon')
         self._polygon_filt()
 
     def _blind_predict(self):
-        self.vel = np.random.multivariate_normal((0.8,0),((1.5,0),(0,1.5)), SWARM_SIZE).T
+        self.vel = np.random.multivariate_normal((0,0),((100,0),(0,100)), SWARM_SIZE).T
         self.pos += self.vel * PERIOD
         self._polygon_filt() # necessary?
     
@@ -166,3 +171,19 @@ class PF:
         self.pos_var = None
         # clear buffer?
 
+    def adsorb_polygon(self):
+        e = self.pos_estimate
+        if not self.polygon_idx:
+            return e
+        polygon = self.polygons[:, :, self.polygon_idx]
+        c = polygon.mean(axis=1)
+        for i in range(4):
+            p = polygon[:, i]
+            s = polygon[:, i-3] - p
+            ep = cross2d(e-p, s)
+            cp = cross2d(c-p, s)
+            if ep * cp < 0: # not in polygon
+                r = cross2d(e-p, c-p) / (ep - cp)
+                if 0 <= r <= 1: # line segments (s and (e, c)) intersect
+                    return p + r*s
+        return e

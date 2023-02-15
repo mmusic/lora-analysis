@@ -1,0 +1,11 @@
+MAPS = {
+11:[[114.26359574227803,22.33694120317442,1,0],[114.26375783225222,22.336940266120138,1,0],[114.26374995813325,22.33569671804098,1,0],[114.26358989428513,22.335696718083014,1,0]],
+}
+
+SOURCE_INFO_DICT = {
+'null': SOURCE_INFO(source_identifier='null', x=114.26364674099, y=22.335764784157, z=1, type='non-lon-lat', activated=True, addition_info={}),
+'null': SOURCE_INFO(source_identifier='null', x=114.26365383241, y=22.33685118156, z=1, type='non-lon-lat', activated=True, addition_info={}),
+}
+
+SURFACE_FEATURE = {
+}
